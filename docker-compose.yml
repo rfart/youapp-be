@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: .
+      target: development
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:dev
+    ports:
+      - 3000:3000
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/youapp
+      - JWT_SECRET=your_super_secure_jwt_secret
+      - JWT_EXPIRATION=1d
+    depends_on:
+      - mongodb
+    networks:
+      - youapp-network
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - youapp-network
+
+networks:
+  youapp-network:
+
+volumes:
+  mongodb_data:
