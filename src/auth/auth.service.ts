@@ -15,10 +15,14 @@ export class AuthService {
   async validateUser(email: string, password: string): Promise<any> {
     try {
       const user = await this.usersService.findOneByEmail(email);
+      if (!user) return null;
+      
       const isPasswordValid = await user.validatePassword(password);
       
       if (isPasswordValid) {
-        const { password, ...result } = user.toObject();
+        // Handle the user object using Document methods or manual approach
+        const userObject = user.toObject ? user.toObject() : JSON.parse(JSON.stringify(user));
+        const { password, ...result } = userObject;
         return result;
       }
       
@@ -29,7 +33,7 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const payload: JwtPayload = { email: user.email, sub: user._id };
+    const payload: JwtPayload = { email: user.email, sub: user._id.toString() };
     
     return {
       access_token: this.jwtService.sign(payload),
