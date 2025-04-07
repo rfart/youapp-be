@@ -3,7 +3,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import { ProfilesModule } from './profiles/profiles.module';
 import { ChatModule } from './chat/chat.module';
 
 @Module({
@@ -20,7 +19,6 @@ import { ChatModule } from './chat/chat.module';
     }),
     AuthModule,
     UsersModule,
-    ProfilesModule,
     ChatModule,
   ],
 })

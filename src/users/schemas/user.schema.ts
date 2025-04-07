@@ -6,6 +6,7 @@ export type UserDocument = Document & {
   email: string;
   username: string;
   password: string;
+  interests: string[];
   validatePassword: (password: string) => Promise<boolean>;
 };
 
@@ -19,6 +20,9 @@ export class User {
 
   @Prop({ required: true })
   password: string;
+
+  @Prop({ required: false, default: [] })
+  interests: string[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

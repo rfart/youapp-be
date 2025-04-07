@@ -1,5 +1,6 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { JwtService } from '@nestjs/jwt';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -8,6 +9,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
+    private jwtService: JwtService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<UserDocument> {
@@ -36,5 +38,29 @@ export class UsersService {
       throw new NotFoundException(`User with id ${id} not found`);
     }
     return user;
+  }
+
+  async findProfileByToken(token: string): Promise<UserDocument> {
+    try {
+      const decoded = this.jwtService.verify(token);
+      const userId = decoded.userId || decoded.sub;
+      
+      if (!userId) {
+        throw new UnauthorizedException('Invalid token payload');
+      }
+      
+      const user = await this.findOneById(userId);
+      
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      
+      return user;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new UnauthorizedException('Invalid or expired token');
+    }
   }
 }
