@@ -1,6 +1,5 @@
-import { Controller, Headers, Get, UseGuards, HttpStatus, HttpCode } from '@nestjs/common';
+import { Controller, Headers, Get, HttpStatus, HttpCode } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { XTokenAuthGuard } from '../auth/guards/x-token-auth.guard';
 
 @Controller('api')
 export class UsersController {

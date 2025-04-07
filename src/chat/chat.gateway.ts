@@ -9,7 +9,7 @@ import { UseGuards } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { ChatService } from './chat.service';
 import { CreateMessageDto } from './dto/create-message.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+// import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { WsJwtGuard } from './guards/ws-jwt.guard';
 
 @WebSocketGateway({
