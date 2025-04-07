@@ -1,12 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import * as bcrypt from 'bcrypt';
+import * as mongoose from 'mongoose';
 
 export type UserDocument = Document & {
   email: string;
   username: string;
   password: string;
   interests: string[];
+  profile: mongoose.Schema.Types.ObjectId;
   validatePassword: (password: string) => Promise<boolean>;
 };
 
@@ -20,9 +22,9 @@ export class User {
 
   @Prop({ required: true })
   password: string;
-
-  @Prop({ required: false, default: [] })
-  interests: string[];
+  
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Profile' })
+  profile: mongoose.Schema.Types.ObjectId;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
