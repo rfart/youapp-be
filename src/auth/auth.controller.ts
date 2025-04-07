@@ -25,3 +25,21 @@ export class AuthController {
     return req.user;
   }
 }
+
+@Controller('api')
+export class ApiAuthController {
+  constructor(private authService: AuthService) {}
+
+  @Post('login')
+  async login(@Body() credentials: { usernameOrEmail: string; password: string }) {
+    return this.authService.loginWithCredentials(
+      credentials.usernameOrEmail,
+      credentials.password,
+    );
+  }
+
+  @Post('register')
+  async register(@Body() createUserDto: CreateUserDto) {
+    return this.authService.register(createUserDto);
+  }
+}

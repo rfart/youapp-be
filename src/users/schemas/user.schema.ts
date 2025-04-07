@@ -4,12 +4,15 @@ import * as bcrypt from 'bcrypt';
 
 export type UserDocument = User & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class User {
   _id: MongooseSchema.Types.ObjectId;
 
   @Prop({ required: true, unique: true })
   email: string;
+
+  @Prop({ required: true, unique: true })
+  username: string;
 
   @Prop({ required: true })
   password: string;
