@@ -46,15 +46,16 @@ export class AuthService {
   }
 
   async loginWithCredentials(usernameOrEmail: string, password: string) {
-    // Check if input is email or username
+    if (!usernameOrEmail || !password) {
+      throw new UnauthorizedException('Username/email and password are required');
+    }
+
     const isEmail = usernameOrEmail.includes('@');
     
     let user;
     if (isEmail) {
       user = await this.usersService.findOneByEmail(usernameOrEmail);
     } else {
-      // Assuming you have a method to find by username in your UserService
-      // If not, you would need to add one
       user = await this.usersService.findOneByUsername(usernameOrEmail);
     }
 
@@ -62,6 +63,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    // Ensure user is an instance of the User schema
     const isPasswordValid = await user.validatePassword(password);
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');

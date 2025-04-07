@@ -9,6 +9,12 @@ export class Profile {
   userId: string;
 
   @Prop()
+  email: string;
+
+  @Prop()
+  username: string;
+
+  @Prop()
   name: string;
 
   @Prop()
@@ -26,7 +32,7 @@ export class Profile {
   @Prop()
   weight: number;
 
-  @Prop()
+  @Prop({ type: [String], default: [] })
   interests: string[];
 
   @Prop()

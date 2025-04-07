@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Headers, HttpStatus, HttpCode } from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
@@ -24,5 +24,27 @@ export class ProfilesController {
   @Patch('me')
   update(@Request() req, @Body() updateProfileDto: UpdateProfileDto) {
     return this.profilesService.update(req.user.userId, updateProfileDto);
+  }
+  
+  @Get('/api/getProfile')
+  @HttpCode(HttpStatus.OK)
+  async getProfile(@Headers('x-access-token') token: string) {
+    if (!token) {
+      return {
+        message: 'Access token is required',
+        statusCode: HttpStatus.UNAUTHORIZED
+      };
+    }
+    
+    const profile = await this.profilesService.findProfileByToken(token);
+    
+    return {
+      message: 'Profile has been found successfully',
+      data: {
+        email: profile.email || '',
+        username: profile.username || '',
+        interests: profile.interests || []
+      }
+    };
   }
 }

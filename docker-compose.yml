@@ -9,17 +9,16 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-    command: npm run start:dev
+    command: sh -c "npm rebuild bcrypt --build-from-source && npm run start:dev"
     ports:
       - 3001:3000
-    environment:
-      - MONGODB_URI=mongodb://mongodb:27017/youapp
-      - JWT_SECRET=your_super_secure_jwt_secret
-      - JWT_EXPIRATION=1d
+    env_file:
+      - .env
     depends_on:
       - mongodb
     networks:
       - youapp-network
+    platform: linux/amd64
 
   mongodb:
     image: mongo:latest

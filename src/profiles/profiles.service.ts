@@ -1,14 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Profile, ProfileDocument } from './schemas/profile.schema';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class ProfilesService {
   constructor(
     @InjectModel(Profile.name) private profileModel: Model<ProfileDocument>,
+    private jwtService: JwtService
   ) {}
 
   async create(userId: string, createProfileDto: CreateProfileDto): Promise<Profile> {
@@ -46,5 +48,23 @@ export class ProfilesService {
     }
     
     return updatedProfile;
+  }
+
+  async findProfileByToken(token: string): Promise<Profile> {
+    try {
+      const decoded = this.jwtService.verify(token);
+      const userId = decoded.sub || decoded.userId;
+      
+      if (!userId) {
+        throw new UnauthorizedException('Invalid token payload');
+      }
+      
+      return this.findOneByUserId(userId);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new UnauthorizedException('Invalid or expired token');
+    }
   }
 }

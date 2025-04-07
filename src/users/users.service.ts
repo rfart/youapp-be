@@ -10,7 +10,7 @@ export class UsersService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<UserDocument> {
     const { email } = createUserDto;
     
     const existingUser = await this.userModel.findOne({ email }).exec();
@@ -30,7 +30,7 @@ export class UsersService {
     return this.userModel.findOne({ username }).exec();
   }
 
-  async findOneById(id: string): Promise<User> {
+  async findOneById(id: string): Promise<UserDocument> {
     const user = await this.userModel.findById(id).exec();
     if (!user) {
       throw new NotFoundException(`User with id ${id} not found`);
