@@ -1,22 +1,20 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { JwtModule } from '@nestjs/jwt';
-import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
+import { ProfileService } from './profile.service';
 import { User, UserSchema } from './schemas/user.schema';
-import { XTokenAuthGuard } from '../auth/guards/x-token-auth.guard';
+import { Profile, ProfileSchema } from './schemas/profile.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    JwtModule.register({
-      // This should match your auth module configuration
-      secret: process.env.JWT_SECRET || 'your-secret-key',
-      signOptions: { expiresIn: '1d' },
-    }),
+    MongooseModule.forFeature([
+      { name: User.name, schema: UserSchema },
+      { name: Profile.name, schema: ProfileSchema }
+    ]),
   ],
   controllers: [UsersController],
-  providers: [UsersService, XTokenAuthGuard],
-  exports: [UsersService],
+  providers: [UsersService, ProfileService],
+  exports: [UsersService, ProfileService],
 })
 export class UsersModule {}
